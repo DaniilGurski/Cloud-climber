@@ -14,8 +14,11 @@ clock = pygame.time.Clock()
 FPS = 60
 
 # game variables
+SCROLL_THRESH = 200
 GRAVITY = 1
 MAX_PLATFORMS = 10
+scroll = 0
+bg_scroll = 0
 
 # define colors 
 WHITE = (255, 255, 255)
@@ -26,6 +29,10 @@ bg_image = pygame.image.load("assets/background.png").convert_alpha()
 bg_image = pygame.transform.scale(bg_image, (SCREEN_WIDTH, SCREEN_HEIGHT))
 jumpy_image = pygame.image.load("assets/jumpy.png").convert_alpha()
 platform_image = pygame.image.load("assets/platform.png").convert_alpha()
+
+def draw_bg(bg_scroll):
+   screen.blit(bg_image, (0, 0 + scroll))
+   screen.blit(bg_image, (0, -223 + scroll))
 
 # player class 
 class Player(): 
@@ -40,6 +47,7 @@ class Player():
 
     def move(self):
         # reset variables
+        scroll = 0
         dx = 0 
         dy = 0 
 
@@ -80,9 +88,18 @@ class Player():
             dy = 0
             self.vel_y = -20
 
-        # update rextangle position
+        # check if the player has bounced to the top of the screen
+        if self.rect.top <= SCROLL_THRESH: 
+            
+            # move everything down only if player jumps 
+            if self.vel_y < 0:
+                scroll = -dy
+
+        # update rectangle position
         self.rect.x += dx
-        self.rect.y += dy
+        self.rect.y += dy + scroll
+
+        return scroll
 
 
     def draw(self):
@@ -96,6 +113,10 @@ class Platform(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
+
+    def update(self, scroll): 
+        # update platform's vertical position
+        self.rect.y += scroll
     
 
 
@@ -117,10 +138,19 @@ while run:
 
     clock.tick(FPS)
 
-    jumpy.move()
+    scroll = jumpy.move()
 
     # draw background 
-    screen.blit(bg_image, (0, 0))
+    bg_scroll += scroll
+    if bg_scroll >= 223:
+        bg_scroll = 0
+    draw_bg(bg_scroll)
+
+    # draw temporary scroll threshold
+    pygame.draw.line(screen, WHITE, (0, SCROLL_THRESH), (SCREEN_WIDTH, SCROLL_THRESH))
+
+    # update platforms
+    platform_group.update(scroll)
 
     # draw sprites
     platform_group.draw(screen)
