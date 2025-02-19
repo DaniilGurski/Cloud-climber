@@ -22,8 +22,6 @@ bg_scroll = 0
 game_over = False
 score = 0 
 
-game_over = False
-score = 0
 
 # define colors 
 WHITE = (255, 255, 255)
@@ -32,10 +30,6 @@ WHITE = (255, 255, 255)
 font_small = pygame.font.SysFont("Lucida Sans", 20)
 font_big = pygame.font.SysFont("Lucida Sans", 24)
 
-
-# define font
-font_small = pygame.font.SysFont("Lucida Sans", 20)
-font_big = pygame.font.SysFont("Lucida Sans", 24)
 
 # Assets
 # TODO: Change background to a more quality image
@@ -53,11 +47,6 @@ def draw_text(text, font, text_col, x, y):
 def draw_bg(bg_scroll):
    screen.blit(bg_image, (0, 0 + scroll))
    screen.blit(bg_image, (0, -223 + scroll))
-
-
-def draw_text(text, font, text_col, x, y):
-    img = font.render(text, True, text_col)
-    screen.blit(img, (x, y))
 
 # player class 
 class Player(): 
@@ -108,11 +97,6 @@ class Player():
                         dy = 0
                         self.vel_y = -20
 
-        # check collision with ground
-        if self.rect.bottom + dy > SCREEN_HEIGHT: 
-            dy = 0
-            self.vel_y = -20
-
         # check if the player has bounced to the top of the screen
         if self.rect.top <= SCROLL_THRESH: 
             
@@ -146,10 +130,6 @@ class Platform(pygame.sprite.Sprite):
         #check if platform has gone off the screen
         if self.rect.top > SCREEN_HEIGHT:
             self.kill()
-
-        # check if platform has gone of the screen
-        if self.rect.top > SCREEN_HEIGHT:
-            self.kill()
     
 
 
@@ -159,16 +139,13 @@ platform_group = pygame.sprite.Group()
 # create starting platform
 platform = Platform(SCREEN_WIDTH // 2 - 50, SCREEN_HEIGHT - 50, 100)
 platform_group.add(platform)
-# create starting platform
-platform = Platform(SCREEN_WIDTH // 2 - 50, SCREEN_HEIGHT - 50, 100)
-platform_group.add(platform)
 
 
 # Game loop
 run = True
 while run:
+    clock.tick(FPS)
     if game_over == False:
-        clock.tick(FPS)
 
         scroll = jumpy.move()
 
@@ -177,7 +154,6 @@ while run:
         if bg_scroll >= 223:
             bg_scroll = 0
         draw_bg(bg_scroll)
-
 
         # generate platforms
         if len(platform_group) < MAX_PLATFORMS:
@@ -189,8 +165,6 @@ while run:
 
         # update platforms
         platform_group.update(scroll)
-        # update platforms
-        platform_group.update(scroll)
 
         # draw sprites
         platform_group.draw(screen)
@@ -198,6 +172,7 @@ while run:
 
         # check game over
         if jumpy.rect.top > SCREEN_HEIGHT: 
+            print("jumpy is f.falling")
             game_over = True
     else:
         draw_text("GAME OVER !", font_big, WHITE, 130, 200)
