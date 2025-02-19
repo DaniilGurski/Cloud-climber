@@ -20,10 +20,18 @@ MAX_PLATFORMS = 10
 scroll = 0
 bg_scroll = 0
 game_over = False
+score = 0 
+
+game_over = False
 score = 0
 
 # define colors 
 WHITE = (255, 255, 255)
+
+# define font 
+font_small = pygame.font.SysFont("Lucida Sans", 20)
+font_big = pygame.font.SysFont("Lucida Sans", 24)
+
 
 # define font
 font_small = pygame.font.SysFont("Lucida Sans", 20)
@@ -36,6 +44,12 @@ bg_image = pygame.transform.scale(bg_image, (SCREEN_WIDTH, SCREEN_HEIGHT))
 jumpy_image = pygame.image.load("assets/jumpy.png").convert_alpha()
 platform_image = pygame.image.load("assets/platform.png").convert_alpha()
 
+#function for outputting text onto teh screen
+def draw_text(text, font, text_col, x, y):
+    img = font.render(text, True, text_col)
+    screen.blit(img, (x, y))
+
+#function for drawing background
 def draw_bg(bg_scroll):
    screen.blit(bg_image, (0, 0 + scroll))
    screen.blit(bg_image, (0, -223 + scroll))
@@ -94,6 +108,10 @@ class Player():
                         dy = 0
                         self.vel_y = -20
 
+        # check collision with ground
+        if self.rect.bottom + dy > SCREEN_HEIGHT: 
+            dy = 0
+            self.vel_y = -20
 
         # check if the player has bounced to the top of the screen
         if self.rect.top <= SCROLL_THRESH: 
@@ -125,6 +143,10 @@ class Platform(pygame.sprite.Sprite):
         # update platform's vertical position
         self.rect.y += scroll
 
+        #check if platform has gone off the screen
+        if self.rect.top > SCREEN_HEIGHT:
+            self.kill()
+
         # check if platform has gone of the screen
         if self.rect.top > SCREEN_HEIGHT:
             self.kill()
@@ -137,6 +159,10 @@ platform_group = pygame.sprite.Group()
 # create starting platform
 platform = Platform(SCREEN_WIDTH // 2 - 50, SCREEN_HEIGHT - 50, 100)
 platform_group.add(platform)
+# create starting platform
+platform = Platform(SCREEN_WIDTH // 2 - 50, SCREEN_HEIGHT - 50, 100)
+platform_group.add(platform)
+
 
 # Game loop
 run = True
@@ -161,6 +187,8 @@ while run:
             platform = Platform(p_x, p_y, p_w)
             platform_group.add(platform)
 
+        # update platforms
+        platform_group.update(scroll)
         # update platforms
         platform_group.update(scroll)
 
