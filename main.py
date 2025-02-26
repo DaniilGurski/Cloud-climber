@@ -1,5 +1,6 @@
 import pygame
 import random
+import os
 
 pygame.init()
 
@@ -27,6 +28,7 @@ fade_counter = 0
 # define colors 
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
+PANEL = (153, 217, 234)
 
 # define font 
 font_small = pygame.font.SysFont("Lucida Sans", 20)
@@ -40,12 +42,18 @@ bg_image = pygame.transform.scale(bg_image, (SCREEN_WIDTH, SCREEN_HEIGHT))
 jumpy_image = pygame.image.load("assets/jumpy.png").convert_alpha()
 platform_image = pygame.image.load("assets/platform.png").convert_alpha()
 
-#function for outputting text onto teh screen
+# function for outputting text onto teh screen
 def draw_text(text, font, text_col, x, y):
     img = font.render(text, True, text_col)
     screen.blit(img, (x, y))
 
-#function for drawing background
+# function for drawing info panel
+def draw_panel():
+    pygame.draw.rect(screen, PANEL, (0, 0, SCREEN_WIDTH, 30))
+    pygame.draw.line(screen, WHITE, (0, 30), (SCREEN_WIDTH, 30), 2)
+    draw_text(f"SCORE: {score}", font_small, WHITE, 0, 0)
+
+# function for drawing background
 def draw_bg(bg_scroll):
    screen.blit(bg_image, (0, 0 + scroll))
    screen.blit(bg_image, (0, -223 + scroll))
@@ -118,14 +126,28 @@ class Player():
         pygame.draw.rect(screen, WHITE, self.rect, 2)
 
 class Platform(pygame.sprite.Sprite): 
-    def __init__(self, x, y, width):
+    def __init__(self, x, y, width, moving):
         pygame.sprite.Sprite.__init__(self)
-        self.image =pygame.transform.smoothscale(platform_image, (width, 10))
+        self.image = pygame.transform.smoothscale(platform_image, (width, 10))
+        self.moving = moving
+        self.move_counter =  random.randint(0, 50)
+        self.direction = random.choice([-1, -1])
+        self.speed = random.randint(1, 2)
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
 
-    def update(self, scroll): 
+    def update(self, scroll):
+        # moving platform side to side if it is a moving platform 
+        if self.moving == True:
+            self.move_counter += 1 
+            self.rect.x += self.direction * self.speed
+
+        # change platform diredction if it has moved fully
+        if self.move_counter >= 100 or self.rect.left < 0 or self.rect.right > SCREEN_WIDTH:
+            self.direction *= -1
+            self.move_counter = 0
+
         # update platform's vertical position
         self.rect.y += scroll
 
@@ -139,7 +161,7 @@ jumpy = Player(SCREEN_WIDTH // 2, SCREEN_HEIGHT - 150)
 platform_group = pygame.sprite.Group()
 
 # create starting platform
-platform = Platform(SCREEN_WIDTH // 2 - 50, SCREEN_HEIGHT - 50, 100)
+platform = Platform(SCREEN_WIDTH // 2 - 50, SCREEN_HEIGHT - 50, 100, False)
 platform_group.add(platform)
 
 
@@ -162,15 +184,27 @@ while run:
             p_w = random.randint(40, 60)
             p_x = random.randint(0, SCREEN_WIDTH - p_w)
             p_y = platform.rect.y - random.randint(80, 120)
-            platform = Platform(p_x, p_y, p_w)
+            p_type = random.randint(1, 2)
+
+            if p_type == 1 and score > 500:
+                p_moving = True
+            else:
+                p_moving = False
+            platform = Platform(p_x, p_y, p_w, p_moving)
             platform_group.add(platform)
 
         # update platforms
         platform_group.update(scroll)
 
+        # update score
+        if scroll > 0:
+            score += scroll
+
         # draw sprites
         platform_group.draw(screen)
         jumpy.draw()
+
+        draw_panel()
 
         # check game over
         if jumpy.rect.top > SCREEN_HEIGHT: 
@@ -201,7 +235,7 @@ while run:
             platform_group.empty()
 
             # create starting platforms
-            platform = Platform(SCREEN_WIDTH // 2 - 50, SCREEN_HEIGHT - 50, 100)
+            platform = Platform(SCREEN_WIDTH // 2 - 50, SCREEN_HEIGHT - 50, 100, False)
             platform_group.add(platform)
 
     
@@ -215,3 +249,6 @@ while run:
 
 
 pygame.quit()
+
+
+# PART 11
