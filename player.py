@@ -39,18 +39,8 @@ class Player():
             dx = -self.rect.left
         if self.rect.right + dx > SCREEN_WIDTH:
             dx = SCREEN_WIDTH - self.rect.right
-
-
-        # check collision with platforms
-        for platform in self.platform_group:
-            # collision in the y direction
-            if platform.rect.colliderect(self.rect.x, self.rect.y + dy, self.width, self.height): 
-                # check if above the platform
-                if self.rect.bottom < platform.rect.centery:
-                    if self.vel_y > 0:
-                        self.rect.bottom = platform.rect.top # avoid clipping
-                        dy = 0
-                        self.vel_y = -20
+        
+        self.check_collision(dy)
 
         # check if the player has bounced to the top of the screen
         if self.rect.top <= SCROLL_THRESH: 
@@ -64,6 +54,17 @@ class Player():
         self.rect.y += dy + scroll
 
         return scroll
+    
+    def check_collision(self, dy):
+        for platform in self.platform_group:
+            # collision in the y direction
+            if platform.rect.colliderect(self.rect.x, self.rect.y + dy, self.width, self.height): 
+                # check if above the platform
+                if self.rect.bottom < platform.rect.centery:
+                    if self.vel_y > 0:
+                        self.rect.bottom = platform.rect.top # avoid clipping
+                        dy = 0
+                        self.vel_y = -20
 
 
     def draw(self):
