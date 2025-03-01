@@ -20,7 +20,7 @@ class Platform(pygame.sprite.Sprite):
             self.move_counter += 1 
             self.rect.x += self.direction * self.speed
 
-        # change platform diredction if it has moved fully
+        # change platform direction if it has moved fully
         if self.move_counter >= 100 or self.rect.left < 0 or self.rect.right > SCREEN_WIDTH:
             self.direction *= -1
             self.move_counter = 0
