@@ -3,7 +3,7 @@ import random
 from settings import *
 from player import Player
 from platform_obj import Platform
-from utils import draw_bg, draw_panel, draw_text
+from utils import draw_panel, draw_text, resource_path, draw_bg
 
 pygame.init()
 
@@ -15,10 +15,10 @@ clock = pygame.time.Clock()
 FPS = 60
 
 # Assets
-bg_image = pygame.image.load("assets/background.png").convert_alpha()
+bg_image = pygame.image.load(resource_path("assets/background.png")).convert_alpha()
 bg_image = pygame.transform.scale(bg_image, (SCREEN_WIDTH, SCREEN_HEIGHT))
-jumpy_image = pygame.image.load("assets/jumpy.png").convert_alpha()
-platform_image = pygame.image.load("assets/platform.png").convert_alpha()
+jumpy_image = pygame.image.load(resource_path("assets/jumpy.png")).convert_alpha()
+platform_image = pygame.image.load(resource_path("assets/platform.png")).convert_alpha()
 
 # define font 
 font_small = pygame.font.SysFont("Lucida Sans", 20)
@@ -78,7 +78,7 @@ while run:
             game_over = True
         
         # check game won
-        if score >= 10000:
+        if score >= 5000:
             game_won = True
     
     elif game_won == True:
