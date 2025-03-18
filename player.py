@@ -69,4 +69,3 @@ class Player():
 
     def draw(self):
         self.screen.blit(pygame.transform.flip(self.image, self.flip, False), (self.rect.x - 12, self.rect.y - 5))
-        pygame.draw.rect(self.screen, WHITE, self.rect, 2)

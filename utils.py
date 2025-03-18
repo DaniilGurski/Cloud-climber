@@ -9,6 +9,7 @@ def draw_panel(screen, font_small, score):
     pygame.draw.rect(screen, PANEL, (0, 0, SCREEN_WIDTH, 30))
     pygame.draw.line(screen, WHITE, (0, 30), (SCREEN_WIDTH, 30), 2)
     draw_text(screen, f"SCORE: {score}", font_small, WHITE, 0, 0)
+    draw_text(screen, "Reach 10 000m!", font_small, WHITE, SCREEN_WIDTH - 150, 5)
 
 def draw_bg(screen, bg_image, scroll):
     screen.blit(bg_image, (0, 0 + scroll))
