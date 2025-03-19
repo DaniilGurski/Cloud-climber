@@ -1,3 +1,9 @@
+"""
+__author__  = "Daniil, Dmytro"
+__version__ = "1.0.0"
+__email__   = "daniil.gurski@elev.ga.ntig.se, dmytro.malanchuk@elev.ga.ntig.se"
+"""
+
 import pygame
 import random
 from settings import *
